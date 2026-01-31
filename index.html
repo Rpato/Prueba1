@@ -2,42 +2,77 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Consulta de datos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Registros</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+    .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h2 { text-align: center; color: #333; margin-bottom: 20px; }
+    .search-group { display: flex; gap: 10px; margin-bottom: 20px; }
+    input { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 8px; outline: none; font-size: 16px; }
+    input:focus { border-color: #007bff; }
+    button { padding: 12px 20px; background-color: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #0056b3; }
+    #resultado { min-height: 50px; }
+    .card { background: #fff; border-left: 5px solid #28a745; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: fadeIn 0.3s ease; }
+    .error { color: #721c24; background: #f8d7da; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #f5c6cb; }
+    .loading { text-align: center; color: #666; font-style: italic; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
 <body>
 
-<h2>Buscar persona</h2>
+  <div class="container">
+    <h2>Buscador</h2>
+    
+    <div class="search-group">
+      <input type="text" id="nombreInput" placeholder="Nombre completo..." onkeypress="if(event.key === 'Enter') buscar()">
+      <button onclick="buscar()">Buscar</button>
+    </div>
 
-<input type="text" id="nombre" placeholder="Nombre completo">
-<button onclick="buscar()">Buscar</button>
+    <div id="resultado"></div>
+  </div>
 
-<pre id="resultado"></pre>
+  <script>
+    // Tu URL de Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbyAr7pzJtXQpLH8oEgezp1GosxIxNfCxVRxgNNEgiXlMp_A59VsPSOd1TfXd-H-fh2e/exec";
 
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyAr7pzJtXQpLH8oEgezp1GosxIxNfCxVRxgNNEgiXlMp_A59VsPSOd1TfXd-H-fh2e/exec";
+    function buscar() {
+      const input = document.getElementById("nombreInput");
+      const display = document.getElementById("resultado");
+      const nombre = input.value.trim();
 
-function buscar() {
-  const nombre = document.getElementById("nombre").value;
-
-  fetch(API_URL + "?nombre=" + encodeURIComponent(nombre))
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        document.getElementById("resultado").innerText = "❌ No encontrado";
-      } else {
-        document.getElementById("resultado").innerText =
-          "Nombre: " + data.nombre + "\n" +
-          "Edad: " + data.edad + "\n" +
-          "Estado civil: " + data.estadoCivil + "\n" +
-          "Residencia: " + data.residencia;
+      if (!nombre) {
+        display.innerHTML = '<p class="error">⚠️ Por favor, escribe un nombre.</p>';
+        return;
       }
-    });
-}
-</script>
+
+      display.innerHTML = '<p class="loading">⏳ Buscando información...</p>';
+
+      // Realizamos la petición a la API de Google Sheets
+      fetch(`${API_URL}?nombre=${encodeURIComponent(nombre)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            display.innerHTML = `<p class="error">❌ ${data.error}</p>`;
+          } else {
+            // Construimos la tarjeta con los datos recibidos
+            display.innerHTML = `
+              <div class="card">
+                <p><strong>👤 Nombre:</strong> ${data.nombre}</p>
+                <p><strong>🎂 Edad:</strong> ${data.edad}</p>
+                <p><strong>💍 Estado Civil:</strong> ${data.estadoCivil}</p>
+                <p><strong>🏠 Residencia:</strong> ${data.residencia}</p>
+              </div>
+            `;
+          }
+        })
+        .catch(err => {
+          display.innerHTML = '<p class="error">🚫 Error de conexión. Verifica los permisos de tu script.</p>';
+          console.error("Error:", err);
+        });
+    }
+  </script>
 
 </body>
-
 </html>
-
-
-
