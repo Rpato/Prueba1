@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de datos</title>
+</head>
+<body>
+
+<h2>Buscar persona</h2>
+
+<input type="text" id="nombre" placeholder="Nombre completo">
+<button onclick="buscar()">Buscar</button>
+
+<pre id="resultado"></pre>
+
+<script>
+const API_URL = "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT";
+
+function buscar() {
+  const nombre = document.getElementById("nombre").value;
+
+  fetch(API_URL + "?nombre=" + encodeURIComponent(nombre))
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("resultado").innerText = "❌ No encontrado";
+      } else {
+        document.getElementById("resultado").innerText =
+          "Nombre: " + data.nombre + "\n" +
+          "Edad: " + data.edad + "\n" +
+          "Estado civil: " + data.estadoCivil + "\n" +
+          "Residencia: " + data.residencia;
+      }
+    });
+}
+</script>
+
+</body>
+</html>
