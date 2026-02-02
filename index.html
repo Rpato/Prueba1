@@ -41,11 +41,11 @@
       const nombre = input.value.trim();
 
       if (!nombre) {
-        display.innerHTML = '<p class="error">⚠️ Por favor, escribe un nombre.</p>';
+        display.innerHTML = '<p class="error"> Por favor, escribe un nombre.</p>';
         return;
       }
 
-      display.innerHTML = '<p class="loading">⏳ Buscando...</p>';
+      display.innerHTML = '<p class="loading">Buscando...</p>';
 
       fetch(`${API_URL}?nombre=${encodeURIComponent(nombre)}`)
         .then(response => response.json())
@@ -53,25 +53,26 @@
           display.innerHTML = ""; 
 
           if (data.error) {
-            display.innerHTML = `<p class="error">❌ ${data.error}</p>`;
+            display.innerHTML = `<p class="error"> ${data.error}</p>`;
           } else {
             data.forEach(persona => {
               display.innerHTML += `
                 <div class="card">
-                  <p><strong>👤 Nombre:</strong> ${persona.nombre}</p>
-                  <p><strong>🎂 Edad:</strong> ${persona.edad}</p>
-                  <p><strong>💍 Estado Civil:</strong> ${persona.estadoCivil}</p>
-                  <p><strong>🏠 Residencia:</strong> ${persona.residencia}</p>
+                  <p><strong> Nombre:</strong> ${persona.nombre}</p>
+                  <p><strong>Edad:</strong> ${persona.edad}</p>
+                  <p><strong>Estado Civil:</strong> ${persona.estadoCivil}</p>
+                  <p><strong>Residencia:</strong> ${persona.residencia}</p>
                 </div>
               `;
             });
           }
         })
         .catch(err => {
-          display.innerHTML = '<p class="error">🚫 Error de conexión o de permisos del script.</p>';
+          display.innerHTML = '<p class="error"> Error de conexión o de permisos del script.</p>';
         });
     }
   </script>
 </body>
 </html>
+
 
