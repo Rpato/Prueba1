@@ -3,22 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buscador de Registros</title>
+  <title>Buscador de Personal</title>
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 50px; }
-    .container { width: 100%; max-width: 450px; }
-    .search-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    h2 { text-align: center; color: #333; margin-top: 0; }
-    .search-group { display: flex; gap: 10px; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    .container { width: 100%; max-width: 400px; }
+    .search-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    h2 { text-align: center; color: #333; }
+    .search-group { display: flex; gap: 8px; }
     input { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 8px; outline: none; font-size: 16px; }
-    input:focus { border-color: #007bff; }
-    button { padding: 12px 20px; background-color: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    button:hover { background-color: #0056b3; }
+    button { padding: 12px 18px; background-color: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
     #resultado { width: 100%; }
-    .card { background: #fff; border-left: 5px solid #28a745; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; animation: fadeIn 0.3s ease; }
+    .card { background: #fff; border-left: 5px solid #28a745; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; }
     .error { color: #721c24; background: #f8d7da; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #f5c6cb; }
     .loading { text-align: center; color: #666; font-style: italic; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -27,17 +24,16 @@
     <div class="search-card">
       <h2>Buscador de Personal</h2>
       <div class="search-group">
-        <input type="text" id="nombreInput" placeholder="Escribe un nombre..." onkeypress="if(event.key === 'Enter') buscar()">
+        <input type="text" id="nombreInput" placeholder="Ej: Luis..." onkeypress="if(event.key === 'Enter') buscar()">
         <button onclick="buscar()">Buscar</button>
       </div>
     </div>
-
     <div id="resultado"></div>
   </div>
 
   <script>
-    // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
-    const API_URL = "https://script.google.com/macros/library/d/1nOXLd951MEnwYcFrnWjjwINFrt3WeAzC3bWOByLQP42ZLQzwTNZLEMIf/9";
+    // Asegúrate de usar tu URL de ejecución terminada en /exec
+    const API_URL = "https://script.google.com/macros/s/AKfycbyAr7pzJtXQpLH8oEgezp1GosxIxNfCxVRxgNNEgiXlMp_A59VsPSOd1TfXd-H-fh2e/exec";
 
     function buscar() {
       const input = document.getElementById("nombreInput");
@@ -49,17 +45,16 @@
         return;
       }
 
-      display.innerHTML = '<p class="loading">⏳ Buscando coincidencias...</p>';
+      display.innerHTML = '<p class="loading">⏳ Buscando...</p>';
 
       fetch(`${API_URL}?nombre=${encodeURIComponent(nombre)}`)
         .then(response => response.json())
         .then(data => {
-          display.innerHTML = ""; // Limpiamos resultados anteriores
+          display.innerHTML = ""; 
 
           if (data.error) {
             display.innerHTML = `<p class="error">❌ ${data.error}</p>`;
           } else {
-            // Recorremos la lista de resultados
             data.forEach(persona => {
               display.innerHTML += `
                 <div class="card">
@@ -74,11 +69,8 @@
         })
         .catch(err => {
           display.innerHTML = '<p class="error">🚫 Error de conexión o de permisos del script.</p>';
-          console.error("Error:", err);
         });
     }
   </script>
-
 </body>
 </html>
-
